@@ -1,0 +1,12 @@
+".\OUTPUT\main.obj",
+".\OUTPUT\timer.obj",
+".\OUTPUT\uart.obj",
+".\OUTPUT\flashrom.obj",
+".\OUTPUT\i2c.obj",
+".\OUTPUT\sht30.obj",
+".\OUTPUT\ds18b20.obj",
+".\OUTPUT\receservice.obj",
+".\OUTPUT\config.obj",
+".\OUTPUT\wdt.obj" 
+TO ".\OUTPUT\temp10ch-11B" 
+PRINT(".\temp10ch-11B.m51") RAMSIZE(256) 

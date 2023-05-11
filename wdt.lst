@@ -1,0 +1,123 @@
+C51 COMPILER V9.59.0.0   WDT                                                               10/26/2022 13:04:37 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE WDT
+OBJECT MODULE PLACED IN .\OUTPUT\wdt.obj
+COMPILER INVOKED BY: D:\Keil_C51\C51\BIN\C51.EXE SYSTEM\wdt.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(.\USER;.\SYSTEM;.\HA
+                    -RDWARE) DEBUG OBJECTEXTEND PRINT(.\wdt.lst) TABS(2) OBJECT(.\OUTPUT\wdt.obj)
+
+line level    source
+
+   1          
+   2          #include  "wdt.h"
+   3          
+   4          //========================================================================
+   5          //u8  Wdt_Inilize(WDT_InitTypeDef *WDTx)
+   6          // 描述: 看门狗初始化程序.
+   7          // 参数: WDTx: 结构参数,请参考wdt.h里的定义.
+   8          // 返回: 成功返回0, 错误返回2
+   9          //========================================================================
+  10          u8  Wdt_Inilize(WDT_InitTypeDef *WDTx)
+  11          {
+  12   1         if(IDLE_Count==WDTx->WDT_IDLE)
+  13   1         {
+  14   2              WDT_CONTR|=(1<<3);      //IDLE模式计数 
+  15   2         }
+  16   1         else if(IDLE_Stop==WDTx->WDT_IDLE)
+  17   1         {
+  18   2              WDT_CONTR&=(~(1<<3));   //IDLE模式不计数 
+  19   2         } 
+  20   1         else
+  21   1         {
+  22   2              return 2;
+  23   2         }  
+  24   1         
+  25   1         if(7>=WDTx->WDT_CLOCK)
+  26   1         {
+  27   2              WDT_CONTR&=(~0x07);
+  28   2              WDT_CONTR|=WDTx->WDT_CLOCK;  //设定看门狗计数器的预分频值  
+  29   2         }
+  30   1         else
+  31   1         {
+  32   2              return 2;
+  33   2         }   
+  34   1      
+  35   1         if(ENABLE==WDTx->WDT_EN)
+  36   1         {
+  37   2              WDT_CONTR|=(1<<5);      //允许看门狗
+  38   2         }
+  39   1         else if(DISABLE==WDTx->WDT_EN)
+  40   1         {
+  41   2              WDT_CONTR&=(~(1<<5));   //禁止看门狗
+  42   2         } 
+  43   1         else
+  44   1         {
+  45   2              return 2;
+  46   2         }       
+  47   1      
+  48   1         return 0;    //成功
+  49   1      }
+  50          
+  51          
+  52          //========================================================================
+  53          //void  Wdt_EnOrNo(u8 theFlag)
+  54          // 描述: 看门狗允许/禁止函数
+C51 COMPILER V9.59.0.0   WDT                                                               10/26/2022 13:04:37 PAGE 2   
+
+  55          //形式参数 u8 theFlag 0=禁止  1=允许
+  56          //========================================================================
+  57          void  Wdt_EnOrNo(u8 theFlag)
+  58          {
+  59   1         if(1==theFlag)
+  60   1         {
+  61   2              WDT_CONTR|=(1<<5);      //允许看门狗
+  62   2         }
+  63   1         else
+  64   1         {
+  65   2              WDT_CONTR&=(~(1<<5));   //禁止看门狗
+  66   2         } 
+  67   1      }
+  68          
+  69          //========================================================================
+  70          //void  Wdt_EnOrNo(u8 theFlag)
+  71          // 描述: 看门狗允许/禁止函数
+  72          //形式参数 u8 theFlag 0=禁止  1=允许
+  73          //========================================================================
+  74          void Wdt_Feed(void)
+  75          {
+  76   1          WDT_CONTR|=(1<<4);      //喂狗
+  77   1      }
+  78          
+  79          /**************************************************************************************
+  80           * 描  述 : WDT配置函数
+  81           * 入  参 : 无
+  82           * 返回值 : 无
+  83           **************************************************************************************/
+  84          void  WDT_config(void)
+  85          {
+  86   1          WDT_InitTypeDef WDT_InitStructure;            //结构定义
+  87   1          WDT_InitStructure.WDT_EN=DISABLE;             //看门狗禁止
+  88   1          WDT_InitStructure.WDT_IDLE=IDLE_Stop;         //看门狗在IDLE模式位不计数 
+  89   1          WDT_InitStructure.WDT_CLOCK=WDT_CLOCK_256T;    //看门狗计数器预分频值 64T--2秒  128T--4秒，256T--8秒
+  90   1          
+  91   1          Wdt_Inilize(&WDT_InitStructure);  
+  92   1          Wdt_EnOrNo(1);  //开启看门狗
+  93   1      // WDT_Flag=0;
+  94   1      }
+  95          
+  96          
+  97          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    131    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       3
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

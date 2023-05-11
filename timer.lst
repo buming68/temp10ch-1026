@@ -1,0 +1,79 @@
+C51 COMPILER V9.59.0.0   TIMER                                                             10/26/2022 13:04:35 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN .\OUTPUT\timer.obj
+COMPILER INVOKED BY: D:\Keil_C51\C51\BIN\C51.EXE HARDWARE\timer.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(.\USER;.\SYSTEM;
+                    -.\HARDWARE) DEBUG OBJECTEXTEND PRINT(.\timer.lst) TABS(2) OBJECT(.\OUTPUT\timer.obj)
+
+line level    source
+
+   1          #include  "timer.h"
+   2          
+   3          /***********************
+   4          功能描述：定时器0初始化
+   5          入口参数：无
+   6          返回值：无
+   7          作用：对串口1进行帧结束的空闲检测，3.5个波特时长，
+   8          ************************/
+   9          void Timer0Init(void)
+  10          {
+  11   1        TMOD &= 0x00;                    //定时器0设置为定时方式16位自装载
+  12   1        AUXR |= 0x80;                    //设置定时器0为1T模式
+  13   1      
+  14   1        
+  15   1        TL0 = (65536-T1TMS);              //1T模式下初始装载值 
+  16   1        TH0 = (65536-T1TMS) >> 8;         //1T模式下初始装载值 
+  17   1        //AUXR |= 0x10;                    //打开定时器0，开始运行 
+  18   1        //AUXR &= 0xEF;                    //关闭定时器0，停止运行  
+  19   1      
+  20   1        TR0 = 1; 
+  21   1        ET0 = 1;                          //使能定时器0中断
+  22   1        //EA = 1;                           
+  23   1      }
+  24          
+  25          /**************************************
+  26          功能描述：定时器0中断服务程序
+  27          入口参数：无
+  28          返回值：无
+  29          ***************************************/
+  30          void timer0_int (void) interrupt TIMER0_VECTOR
+  31          {
+  32   1      
+  33   1        TR0 = 0;        //超时关闭定时器
+  34   1        
+  35   1        if(Recv_Cnt >= 7)     //常用最少7个字节
+  36   1        { 
+  37   2            Recv_OK  = 1;     //主程序处理接收数据标志
+  38   2            LED_B = ~LED_B;  
+  39   2            REN = 0;          //关闭串口接收，在处理程序中再开串口接收
+  40   2        }else Recv_Cnt = 0;   //否则丢弃
+  41   1      
+  42   1      }
+  43          
+  44          /***********************
+  45          功能描述：定时器2初始化
+  46          入口参数：无
+  47          返回值：无,在串口1初始化中进行初始化，作为波特率发生器
+  48          ************************/
+  49          
+  50          
+  51          /*********************************END FILE********************************************/ 
+  52          
+  53            
+
+C51 COMPILER V9.59.0.0   TIMER                                                             10/26/2022 13:04:35 PAGE 2   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     66    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
